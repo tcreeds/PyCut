@@ -1,12 +1,16 @@
-from enum import Enum
-class STATE(Enum):
+class STATE():
     """docstring for STATE"""
-    NORMAL = 0;  ACTIVE = 1;  HOVER = 2; INACTIVE = 3;
+    NORMAL = 0;
+    ACTIVE = 1;
+    HOVER = 2;
+    INACTIVE = 3;
 
-class STYLES_NAMES(Enum):
+class STYLES_NAMES():
     """docstring for STYLES"""
-    COLOR = "color";  BACKGROUND_IMG = "background_img";
-    BACKGROUND_COLOR = "background_color"; PEN = "pen";
+    COLOR = "color";  
+    BACKGROUND_IMG = "background_img";
+    BACKGROUND_COLOR = "background_color";
+    PEN = "pen";
 
 from .button import Button
 from .text import Text
