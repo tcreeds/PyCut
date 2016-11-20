@@ -17,3 +17,4 @@ from .text import Text
 from .slice import Slice
 from .pizza import Pizza
 from .message_bubble import MessageBubble
+from .toggle import Toggle

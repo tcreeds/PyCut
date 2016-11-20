@@ -1,7 +1,7 @@
 import random
 import pygame
 from . import SceneBase
-from game.objects import STATE, Text, Button, Pizza, MessageBubble
+from game.objects import STATE, Text, Button, Pizza, MessageBubble, Toggle
 
 class GameScene(SceneBase):
     def __init__(self, context):
@@ -10,6 +10,7 @@ class GameScene(SceneBase):
         self.level = self.context.level
         self.game_over = False
         self.leveling_up = False
+        self.fractions = [1/4, 1/3, 1/2]
         self.buttons = []
         self.bad_pizzas = []
         self.good_pizzas = []
@@ -20,7 +21,7 @@ class GameScene(SceneBase):
         self.createGameMenu()
         self.createMessageBubble()
         self.buildPizzas()
-        self.createToppingOptions()
+        self.createToppingOptionsWithFractions()
         
         self.pizza_count_msg = Text(self.context, "{} Pizzas left".format(len(self.pizzas)))
         self.pizza_count_msg.setPen(self.context.font)
@@ -35,7 +36,7 @@ class GameScene(SceneBase):
         self.level_up_msg =   Text(self.context, "New Level reached")
         self.level_up_msg.setPen(self.context.bold_font_large)
         self.level_up_msg.setColor((255,140,0))
-        self.level_up_msg.setLocation((self.screen.get_width()/2) -(self.restart_button.width/2), 300)
+        self.level_up_msg.setLocation((self.screen.get_width()/2) -(self.level_up_msg.width/2), 300)
         
         self.continue_button = Button(self.context, "continue")
         self.continue_button.setBackgroundImg(self.context.button_bg, STATE.NORMAL)
@@ -50,8 +51,6 @@ class GameScene(SceneBase):
         self.count = 0#for debugging
         
         pygame.display.flip()
-        
-        print "Rendered game background"
 
     def ProcessInput(self, events, pressed_keys):
         for event in events:
@@ -72,8 +71,8 @@ class GameScene(SceneBase):
                     self.continue_button.isClicked(event)
 
             if event.type == pygame.MOUSEMOTION:
-                for button in self.buttons:
-                    button.isHovered(event)
+                #for button in self.buttons:
+                #    button.isHovered(event)
                 if self.leveling_up:
                     self.continue_button.isHovered(event)
 
@@ -253,6 +252,36 @@ class GameScene(SceneBase):
         self.pineappleBtn.setOnLeftClick(self.addPineappleTopping)
         self.pineappleBtn.setLocation(X + self.mushroomBtn.width + K, Y + self.pepperoniBtn.height + K)
         self.buttons += [self.cheeseBtn, self.mushroomBtn, self.pepperoniBtn, self.pineappleBtn]
+                
+    def createToppingOptionsWithFractions(self):
+        X = 550
+        Y = 620
+        K = 4
+        self.cheeseBtn = Toggle(self.context, "Cheese")
+        self.cheeseBtn.setBackgroundImg(self.context.button_bg, STATE.NORMAL)
+        self.cheeseBtn.setBackgroundImg(self.context.button_bg_active, STATE.ACTIVE)
+        self.cheeseBtn.setOnSelect(self.addCheeseTopping)        
+        self.cheeseBtn.setOnDeselect(self.addCheeseTopping)
+        self.cheeseBtn.setLocation(X, Y)
+        self.mushroomBtn = Toggle(self.context, "Mushroom")
+        self.mushroomBtn.setBackgroundImg(self.context.button_bg, STATE.NORMAL)
+        self.mushroomBtn.setBackgroundImg(self.context.button_bg_active, STATE.ACTIVE)
+        self.mushroomBtn.setOnSelect(self.addMushroomTopping)
+        self.mushroomBtn.setOnDeselect(self.addMushroomTopping)
+        self.mushroomBtn.setLocation(X, Y + self.cheeseBtn.height + K)
+        self.pepperoniBtn = Toggle(self.context, "Pepperoni")
+        self.pepperoniBtn.setBackgroundImg(self.context.button_bg, STATE.NORMAL)
+        self.pepperoniBtn.setBackgroundImg(self.context.button_bg_active, STATE.ACTIVE)
+        self.pepperoniBtn.setOnSelect(self.addPepperoniTopping)
+        self.pepperoniBtn.setOnDeselect(self.addPepperoniTopping)
+        self.pepperoniBtn.setLocation(X, Y + (self.pepperoniBtn.height + K) * 2)
+        self.pineappleBtn = Toggle(self.context, "Pineapple")
+        self.pineappleBtn.setBackgroundImg(self.context.button_bg, STATE.NORMAL)
+        self.pineappleBtn.setBackgroundImg(self.context.button_bg_active, STATE.ACTIVE)
+        self.pineappleBtn.setOnSelect(self.addPineappleTopping)
+        self.pineappleBtn.setOnDeselect(self.addPineappleTopping)
+        self.pineappleBtn.setLocation(X, Y + (self.pepperoniBtn.height + K) * 3)
+        self.buttons += [self.cheeseBtn, self.mushroomBtn, self.pepperoniBtn, self.pineappleBtn]
 
     def addCheeseTopping(self):
         if self.current_pizza:
@@ -270,6 +299,30 @@ class GameScene(SceneBase):
         if self.current_pizza:
             self.current_pizza.addTopping(self.context.pineapple_img)
 
+    def increaseCheeseTopping(self):
+        pass
+    
+    def increaseMushroomTopping(self):
+        pass
+    
+    def increasePepperoniTopping(self):
+        pass
+    
+    def increasePineappleTopping(self):
+        pass
+    
+    def decreaseCheeseTopping(self):
+        pass
+    
+    def decreaseMushroomTopping(self):
+        pass
+    
+    def decreasePepperoniTopping(self):
+        pass
+    
+    def decreasePineappleTopping(self):
+        pass
+            
     def addCookingButton(self):
         self.cook = Button(self.context, "Cook")
         self.cook.setLocation(120, 770)
@@ -277,7 +330,7 @@ class GameScene(SceneBase):
         self.cook.setBackgroundImg(self.context.button_bg_active, STATE.ACTIVE)
         self.cook.setOnLeftClick(self.handleCooking)
         self.buttons += [self.cook]
-
+    
     def handleCooking(self):
         if self.current_pizza:
             validity = self.current_pizza.checkRequirements()
@@ -288,6 +341,10 @@ class GameScene(SceneBase):
                 self.current_pizza.moveToTrash((1000,600), self.trashCan)
             if validity[1]:
                 self.message_bubble.addMessage(None, validity[1])
+            self.cheeseBtn.deselect()
+            self.mushroomBtn.deselect()
+            self.pepperoniBtn.deselect()
+            self.pineappleBtn.deselect()
 
     def createMessageBubble(self):
         self.message_bubble = MessageBubble(self.context)

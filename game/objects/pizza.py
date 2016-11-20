@@ -65,7 +65,6 @@ class Pizza(Rangable):
     def drawTopping(self, surf, topping_img, pad=0):
         #needs serious refactoring
         topping_img = pygame.transform.scale(topping_img, (self.width/4, self.height/4))
-        degree = 0
         #center portion
         surf.blit(topping_img, ( (surf.get_width()/2) - (topping_img.get_width()/2), (surf.get_height()/2) - (topping_img.get_height()/2)))
         #top portion
@@ -76,7 +75,6 @@ class Pizza(Rangable):
         surf.blit( pygame.transform.rotate(topping_img, 45), ( w, 3*h ))
         surf.blit( pygame.transform.rotate(topping_img, 45), ( 3*w , 3*h ))
 
-        degree += 45
         return surf
 
     """
