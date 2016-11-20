@@ -8,7 +8,7 @@ class Button(Clickable, Hoverable):
         Clickable.__init__(self)
         Hoverable.__init__(self)
         self.context = context
-        self.state = STATE.NORMAL
+        self.setState(STATE.NORMAL)
         self.label = label
         self.x = None
         self.y = None
@@ -83,6 +83,7 @@ class Button(Clickable, Hoverable):
             screen.blit(self.drawing, self.location)
         else:
             print("Error: drawOn was called on Button object but no screen argument was passed")
+        self.is_dirty = False
 
     """
     change the font size

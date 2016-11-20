@@ -86,9 +86,9 @@ class PyCutGame():
             self.active_scene.Update()
             self.active_scene.Render()
 
+            if not self.active_scene.override_render:
+                pygame.display.flip()
             self.active_scene = self.active_scene.next
-
-            pygame.display.flip()
             self.clock.tick(self.fps)
 
     def run(self):

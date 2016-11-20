@@ -3,6 +3,7 @@ class SceneBase:
         self.next = self
         self.context = context
         self.screen = self.context.screen
+        self.override_render = False
 
     def ProcessInput(self, events, pressed_keys):
         print("uh-oh, you didn't override this in the child class")
