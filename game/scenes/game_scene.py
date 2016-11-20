@@ -6,6 +6,7 @@ from game.objects import STATE, Text, Button, Pizza, MessageBubble
 class GameScene(SceneBase):
     def __init__(self, context):
         SceneBase.__init__(self, context)
+        self.override_render = True
         self.level = self.context.level
         self.game_over = False
         self.leveling_up = False
@@ -15,32 +16,42 @@ class GameScene(SceneBase):
         self.game_toppings = self.context.game_toppings
         self.characters = self.context.game_characters
         self.current_pizza = None
+        
         self.createGameMenu()
         self.createMessageBubble()
         self.buildPizzas()
         self.createToppingOptions()
+        
         self.pizza_count_msg = Text(self.context, "{} Pizzas left".format(len(self.pizzas)))
         self.pizza_count_msg.setPen(self.context.font)
         self.pizza_count_msg.setColor((0, 0, 0))
         self.pizza_count_msg.setLocation(350, 675)
+        
         self.game_over_msg =   Text(self.context, "Game Over!!!")
         self.game_over_msg.setPen(self.context.bold_font_large)
         self.game_over_msg.setColor((255,140,0))
         self.game_over_msg.setLocation((self.screen.get_width()/2) -(self.restart_button.width/2), 300)
+        
         self.level_up_msg =   Text(self.context, "New Level reached")
         self.level_up_msg.setPen(self.context.bold_font_large)
         self.level_up_msg.setColor((255,140,0))
         self.level_up_msg.setLocation((self.screen.get_width()/2) -(self.restart_button.width/2), 300)
+        
         self.continue_button = Button(self.context, "continue")
         self.continue_button.setBackgroundImg(self.context.button_bg, STATE.NORMAL)
         self.continue_button.setBackgroundImg(self.context.button_bg_active, STATE.ACTIVE)
         self.continue_button.setOnLeftClick(self.handleContinueButtonClick)
         self.continue_button.setLocation( (self.screen.get_width()/2) -(self.continue_button.width/2) ,
             (self.screen.get_height()/2) - (self.continue_button.height/2) )
+        
         self.createTrashCan()
         self.addCookingButton()
         self.generateCurrentPizzaRequirements()
         self.count = 0#for debugging
+        
+        pygame.display.flip()
+        
+        print "Rendered game background"
 
     def ProcessInput(self, events, pressed_keys):
         for event in events:
@@ -72,7 +83,6 @@ class GameScene(SceneBase):
         self.checkForTrashedPizzas()
         self.pizza_count_msg.setText("{} Pizzas left".format(len(self.pizzas)))
         self.levelDisplay.setText("Level: {}".format(self.level))
-        #self.message_bubble.addMessage( "Pizza #: {}".format(self.count))
 
     def Render(self):
         # The game scene is just a blank blue screen
@@ -102,6 +112,7 @@ class GameScene(SceneBase):
             pizza.drawOn(self.screen)
         self.pizza_count_msg.drawOn(self.screen)
         self.screen.blit(self.trashCanFront, (1000,600))
+        pygame.display.update()
 
     """
         Take care of element initialization and event handlers bellow

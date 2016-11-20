@@ -6,7 +6,7 @@ class Clickable():
         TODO: modify to handle clicked vs released
     """
     def __init__(self):
-        self.state = STATE.NORMAL
+        self.setState(STATE.NORMAL)
         self.location = (0,0)
         self.width = 0
         self.height = 0
@@ -19,12 +19,12 @@ class Clickable():
         if self.inRange(event.pos[0], event.pos[1]):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.initiated = True
-                self.state = STATE.ACTIVE
+                self.setState(STATE.ACTIVE)
             if self.initiated and (event.type == pygame.MOUSEBUTTONUP):
                 self.engaged = True
         else: #when click or release is detected outside of range make sure this is still not initiated
             self.initiated = False
-            self.state = STATE.NORMAL
+            self.setState(STATE.NORMAL)
 
         if self.engaged:
             if event.button == 1: # left click
@@ -35,7 +35,7 @@ class Clickable():
                     self.onRightClick()
             self.initiated = False
             self.engaged = False
-            self.state = STATE.NORMAL
+            self.setState(STATE.NORMAL)
 
     def inRange(self, x, y):
         if ((self.x <= x <= (self.x + self.width)) and
@@ -49,3 +49,7 @@ class Clickable():
 
     def setOnRightClick(self, func):
         self.onRightClick = func
+        
+    def setState(self, state):
+        self.state = state
+        self.is_dirty = True
