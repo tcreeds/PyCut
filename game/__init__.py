@@ -56,6 +56,7 @@ class PyCutGame():
         self.bold_font_small = pygame.font.Font(self.bold_font_path, 14)
         pygame.display.set_caption(self.title)
         pygame.display.set_icon(self.game_icon)
+        self.difficulty = "Easy"
         self.starting_scene = scenes.TitleScene
         self.active_scene = self.starting_scene(self)
         """    def write(self, text, center, size=self.size):
