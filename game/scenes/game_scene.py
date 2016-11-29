@@ -10,7 +10,7 @@ class GameScene(SceneBase):
         self.level = self.context.level
         self.game_over = False
         self.leveling_up = False
-        self.fractions = [1/4, 1/3, 1/2]
+        self.fractions = [1/4, 1/2, 1]
         self.buttons = []
         self.bad_pizzas = []
         self.good_pizzas = []
@@ -254,7 +254,7 @@ class GameScene(SceneBase):
         self.buttons += [self.cheeseBtn, self.mushroomBtn, self.pepperoniBtn, self.pineappleBtn]
                 
     def createToppingOptionsWithFractions(self):
-        X = 550
+        X = 540
         Y = 620
         K = 4
         self.cheeseBtn = Toggle(self.context, "Cheese")
@@ -282,6 +282,25 @@ class GameScene(SceneBase):
         self.pineappleBtn.setOnDeselect(self.addPineappleTopping)
         self.pineappleBtn.setLocation(X, Y + (self.pepperoniBtn.height + K) * 3)
         self.buttons += [self.cheeseBtn, self.mushroomBtn, self.pepperoniBtn, self.pineappleBtn]
+        toggles = [self.cheeseBtn, self.mushroomBtn, self.pepperoniBtn, self.pineappleBtn]
+        increaseCallbacks = [self.increaseCheeseTopping, self.increaseMushroomTopping, self.increasePepperoniTopping, self.increasePineappleTopping]
+        decreaseCallbacks = [self.decreaseCheeseTopping, self.decreaseMushroomTopping, self.decreasePepperoniTopping, self.decreasePineappleTopping]
+        
+        for i in range(0, 4):
+            leftButton = Button(self.context, "<")
+            leftButton.setBackgroundImg(self.context.button_bg, STATE.NORMAL)
+            leftButton.setBackgroundImg(self.context.button_bg_active, STATE.ACTIVE)
+            leftButton.setOnLeftClick(decreaseCallbacks[i])
+            leftButton.setLocation(X + self.cheeseBtn.width + K * 3, Y + (self.cheeseBtn.height + K) * i)
+            leftButton.width = 30
+            rightButton = Button(self.context, ">")
+            rightButton.setBackgroundImg(self.context.button_bg, STATE.NORMAL)
+            rightButton.setBackgroundImg(self.context.button_bg_active, STATE.ACTIVE)
+            rightButton.setOnLeftClick(increaseCallbacks[i])
+            rightButton.setLocation(leftButton.location[0] + leftButton.width + K, Y + (self.cheeseBtn.height + K) * i)
+            rightButton.width = 30
+            self.buttons += [leftButton, rightButton]
+
 
     def addCheeseTopping(self):
         if self.current_pizza:
