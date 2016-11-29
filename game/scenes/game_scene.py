@@ -10,7 +10,7 @@ class GameScene(SceneBase):
         self.level = self.context.level
         self.game_over = False
         self.leveling_up = False
-        self.fractions = [1/4, 1/2, 1]
+        self.context.fractions = [0, 0.25, 0.5, 1]
         self.buttons = []
         self.bad_pizzas = []
         self.good_pizzas = []
@@ -21,7 +21,10 @@ class GameScene(SceneBase):
         self.createGameMenu()
         self.createMessageBubble()
         self.buildPizzas()
-        self.createToppingOptionsWithFractions()
+        if self.context.difficulty == "Easy":
+            self.createToppingOptions()
+        else:
+            self.createToppingOptionsWithFractions()
         
         self.pizza_count_msg = Text(self.context, "{} Pizzas left".format(len(self.pizzas)))
         self.pizza_count_msg.setPen(self.context.font)
@@ -101,6 +104,9 @@ class GameScene(SceneBase):
         else:
             for button in self.buttons:
                 button.drawOn(self.screen)
+            if self.context.difficulty == "Advanced":
+                for fracText in self.fractionTexts:
+                    fracText.drawOn(self.screen)
 
         self.screen.blit(self.trashCanBack, (1000,600))
         #draw pizzas in the trash can
@@ -257,90 +263,79 @@ class GameScene(SceneBase):
         X = 540
         Y = 620
         K = 4
-        self.cheeseBtn = Toggle(self.context, "Cheese")
-        self.cheeseBtn.setBackgroundImg(self.context.button_bg, STATE.NORMAL)
-        self.cheeseBtn.setBackgroundImg(self.context.button_bg_active, STATE.ACTIVE)
-        self.cheeseBtn.setOnSelect(self.addCheeseTopping)        
-        self.cheeseBtn.setOnDeselect(self.addCheeseTopping)
-        self.cheeseBtn.setLocation(X, Y)
-        self.mushroomBtn = Toggle(self.context, "Mushroom")
-        self.mushroomBtn.setBackgroundImg(self.context.button_bg, STATE.NORMAL)
-        self.mushroomBtn.setBackgroundImg(self.context.button_bg_active, STATE.ACTIVE)
-        self.mushroomBtn.setOnSelect(self.addMushroomTopping)
-        self.mushroomBtn.setOnDeselect(self.addMushroomTopping)
-        self.mushroomBtn.setLocation(X, Y + self.cheeseBtn.height + K)
-        self.pepperoniBtn = Toggle(self.context, "Pepperoni")
-        self.pepperoniBtn.setBackgroundImg(self.context.button_bg, STATE.NORMAL)
-        self.pepperoniBtn.setBackgroundImg(self.context.button_bg_active, STATE.ACTIVE)
-        self.pepperoniBtn.setOnSelect(self.addPepperoniTopping)
-        self.pepperoniBtn.setOnDeselect(self.addPepperoniTopping)
-        self.pepperoniBtn.setLocation(X, Y + (self.pepperoniBtn.height + K) * 2)
-        self.pineappleBtn = Toggle(self.context, "Pineapple")
-        self.pineappleBtn.setBackgroundImg(self.context.button_bg, STATE.NORMAL)
-        self.pineappleBtn.setBackgroundImg(self.context.button_bg_active, STATE.ACTIVE)
-        self.pineappleBtn.setOnSelect(self.addPineappleTopping)
-        self.pineappleBtn.setOnDeselect(self.addPineappleTopping)
-        self.pineappleBtn.setLocation(X, Y + (self.pepperoniBtn.height + K) * 3)
-        self.buttons += [self.cheeseBtn, self.mushroomBtn, self.pepperoniBtn, self.pineappleBtn]
-        toggles = [self.cheeseBtn, self.mushroomBtn, self.pepperoniBtn, self.pineappleBtn]
+        
         increaseCallbacks = [self.increaseCheeseTopping, self.increaseMushroomTopping, self.increasePepperoniTopping, self.increasePineappleTopping]
         decreaseCallbacks = [self.decreaseCheeseTopping, self.decreaseMushroomTopping, self.decreasePepperoniTopping, self.decreasePineappleTopping]
+        
+        self.fractionTexts = []
         
         for i in range(0, 4):
             leftButton = Button(self.context, "<")
             leftButton.setBackgroundImg(self.context.button_bg, STATE.NORMAL)
             leftButton.setBackgroundImg(self.context.button_bg_active, STATE.ACTIVE)
             leftButton.setOnLeftClick(decreaseCallbacks[i])
-            leftButton.setLocation(X + self.cheeseBtn.width + K * 3, Y + (self.cheeseBtn.height + K) * i)
+            leftButton.setLocation(X + K * 3, Y + (leftButton.height + K) * i)
             leftButton.width = 30
+            
+            fracText = Text(self.context, "0")
+            fracText.setLocation(leftButton.location[0] + leftButton.width + K, Y + (leftButton.height + K) * i)
+            
             rightButton = Button(self.context, ">")
             rightButton.setBackgroundImg(self.context.button_bg, STATE.NORMAL)
             rightButton.setBackgroundImg(self.context.button_bg_active, STATE.ACTIVE)
             rightButton.setOnLeftClick(increaseCallbacks[i])
-            rightButton.setLocation(leftButton.location[0] + leftButton.width + K, Y + (self.cheeseBtn.height + K) * i)
+            rightButton.setLocation(leftButton.location[0] + 100, Y + (leftButton.height + K) * i)
             rightButton.width = 30
+            
+            self.fractionTexts += [fracText]
             self.buttons += [leftButton, rightButton]
 
 
     def addCheeseTopping(self):
         if self.current_pizza:
-            self.current_pizza.addTopping(self.context.cheese_img)
+            self.current_pizza.addTopping(0)
 
     def addMushroomTopping(self):
         if self.current_pizza:
-            self.current_pizza.addTopping(self.context.mushroom_img)
+            self.current_pizza.addTopping(1)
 
     def addPepperoniTopping(self):
         if self.current_pizza:
-            self.current_pizza.addTopping(self.context.pepperoni_img)
+            self.current_pizza.addTopping(2)
 
     def addPineappleTopping(self):
         if self.current_pizza:
-            self.current_pizza.addTopping(self.context.pineapple_img)
+            self.current_pizza.addTopping(3)
 
     def increaseCheeseTopping(self):
-        pass
+        self.changeToppingAmount(0, 1)
     
     def increaseMushroomTopping(self):
-        pass
+        self.changeToppingAmount(1, 1)
     
     def increasePepperoniTopping(self):
-        pass
+        self.changeToppingAmount(2, 1)
     
     def increasePineappleTopping(self):
-        pass
+        self.changeToppingAmount(3, 1)
     
     def decreaseCheeseTopping(self):
-        pass
+        self.changeToppingAmount(0, -1)
     
     def decreaseMushroomTopping(self):
-        pass
+        self.changeToppingAmount(1, -1)
     
     def decreasePepperoniTopping(self):
-        pass
+        self.changeToppingAmount(2, -1)
     
     def decreasePineappleTopping(self):
-        pass
+        self.changeToppingAmount(3, -1)
+    
+    def changeToppingAmount(self, index, amount):
+        newAmount = self.current_pizza.toppings[index] + amount
+        if newAmount >= 0 and newAmount < len(self.context.fractions):
+            self.current_pizza.toppings[index] = newAmount
+            self.fractionTexts[index].setText(str(self.context.fractions[newAmount]))
             
     def addCookingButton(self):
         self.cook = Button(self.context, "Cook")
@@ -360,10 +355,6 @@ class GameScene(SceneBase):
                 self.current_pizza.moveToTrash((1000,600), self.trashCan)
             if validity[1]:
                 self.message_bubble.addMessage(None, validity[1])
-            self.cheeseBtn.deselect()
-            self.mushroomBtn.deselect()
-            self.pepperoniBtn.deselect()
-            self.pineappleBtn.deselect()
 
     def createMessageBubble(self):
         self.message_bubble = MessageBubble(self.context)
@@ -375,11 +366,14 @@ class GameScene(SceneBase):
 
     def generateCurrentPizzaRequirements(self):
         requires = []
+        if self.context.difficulty == "Easy":
+            seq = (0, 1)
+        else:
+            seq = self.context.fractions
         for i in xrange(0, self.level):
             random.getrandbits(1)
         for topping in self.game_toppings:
-            if bool(random.getrandbits(1)):
-                requires += [topping]
+            requires += [random.choice(seq)]
         if self.current_pizza:
             self.message_bubble.addMessage("I need a pizza")
             self.current_pizza.setRequirements(requires)

@@ -22,7 +22,7 @@ class Pizza(Rangable):
         self.location = (self.x,self.y)
         self.width = 150
         self.height = 150
-        self.toppings = []
+        self.toppings = [0, 0, 0, 0]
         self.requirements = []
         self.drawing = None
         self.draw()
@@ -42,8 +42,9 @@ class Pizza(Rangable):
         surf = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
         pizza_img = pygame.transform.scale(self.context.plain_pizza, (self.width, self.height))
         surf.blit(pizza_img, (0,0))
-        for topping in self.toppings:
-            self.drawTopping(surf, topping, 0)
+        for i in range(0, len(self.toppings)):
+            if self.toppings[i] > 0:
+                self.drawTopping(surf, i, 0)
         #gfxdraw.filled_ellipse(surf, self.width//2,self.height//2, self.width/2, self.height/2, (219,162,74))#pizza
         #pygame.draw.arc(surf, (225,216,0), [0, 0, self.width, self.height], 0, 360, 2)#crust
         #draw slices on here afterwards
@@ -62,18 +63,22 @@ class Pizza(Rangable):
     """
         return topping drawing
     """
-    def drawTopping(self, surf, topping_img, pad=0):
+    def drawTopping(self, surf, i, pad=0):
         #needs serious refactoring
-        topping_img = pygame.transform.scale(topping_img, (self.width/4, self.height/4))
+        topping_img = pygame.transform.scale(self.context.game_toppings[i], (self.width/4, self.height/4))
+        amount = self.context.fractions[self.toppings[i]]
         #center portion
         surf.blit(topping_img, ( (surf.get_width()/2) - (topping_img.get_width()/2), (surf.get_height()/2) - (topping_img.get_height()/2)))
         #top portion
         w,h = (surf.get_width()/6) + pad, surf.get_height()/6
-        surf.blit( pygame.transform.rotate(topping_img, 45), ( w, h ))
-        surf.blit( pygame.transform.rotate(topping_img, 45), ( 3*w , h ))
+        if amount > 0:
+            surf.blit( pygame.transform.rotate(topping_img, 45), ( w, h ))
+        if amount > 0.25:
+            surf.blit( pygame.transform.rotate(topping_img, 45), ( 3*w , h ))
         #bottom portion
-        surf.blit( pygame.transform.rotate(topping_img, 45), ( w, 3*h ))
-        surf.blit( pygame.transform.rotate(topping_img, 45), ( 3*w , 3*h ))
+        if amount > 0.5:
+            surf.blit( pygame.transform.rotate(topping_img, 45), ( w, 3*h ))
+            surf.blit( pygame.transform.rotate(topping_img, 45), ( 3*w , 3*h ))
 
         return surf
 
@@ -93,12 +98,11 @@ class Pizza(Rangable):
     """
         Add topping
     """
-    def addTopping(self, topping):
-        if not(self.trashing or self.trashed):
-            if topping not in self.toppings:
-                self.toppings += [topping]
-            else:
-                self.toppings.remove(topping)
+    def addTopping(self, index):
+        if self.toppings[index] == 0:
+            self.toppings[index] = 3
+        else:
+            self.toppings[index] = 0
 
     """
         set Costumer hidden Pizza requirements
@@ -115,21 +119,42 @@ class Pizza(Rangable):
     def checkRequirements(self):
         message = []
         metRequirement = False
-        notwanted = 0
-        missing = len(self.requirements) - len(self.toppings)
-        for topping in self.toppings:
-            if topping not in self.requirements:
-                notwanted += 1
-        if missing > 0:
-            message += ["There is too little toppings on the pizza. :(".format(notwanted)]
-        elif missing < 0:
-            message += ["There is too much toppings on the pizza than I wanted. :(".format(notwanted)]
-        if notwanted > 0:
-            message += ["There is {} topping on the pizza I don't like. :(".format(notwanted)]
-        if not(notwanted) and missing == 0:
-            metRequirement = True
-            message += ["Thank you! That was the perfect Pizza I was looking for :)\n"]
-        return (metRequirement, message)
+        if self.context.difficulty == "Easy":
+            notwanted = 0
+            missing = 0
+            for i in range(0, len(self.toppings)):
+                if self.toppings[i] > 0 and self.requirements[i] == 0:
+                    notwanted += 1
+                elif self.toppings[i] == 0 and self.requirements[i] > 0:
+                    missing += 1
+            if missing > 0:
+                message += ["There aren't enough toppings on the pizza. :(".format(notwanted)]
+            elif missing < 0:
+                message += ["There are toppings on the pizza that I don't want. :(".format(notwanted)]
+            if notwanted > 0:
+                message += ["There is {} topping on the pizza I don't like. :(".format(notwanted)]
+            if not(notwanted) and missing == 0:
+                metRequirement = True
+                message += ["Thank you! That was the perfect Pizza I was looking for :)\n"]
+            return (metRequirement, message)
+        else:
+            notwanted = 0
+            missing = 0
+            for i in range(0, len(self.toppings)):
+                if self.toppings[i] > self.requirements[i]:
+                    notwanted += 1
+                elif self.toppings[i] < self.requirements[i]:
+                    missing += 1
+            if missing > 0:
+                message += ["There aren't enough toppings on the pizza. :(".format(notwanted)]
+            elif missing < 0:
+                message += ["There are toppings on the pizza that I don't want. :(".format(notwanted)]
+            if notwanted > 0:
+                message += ["There is {} topping on the pizza I don't like. :(".format(notwanted)]
+            if not(notwanted) and missing == 0:
+                metRequirement = True
+                message += ["Thank you! That was the perfect Pizza I was looking for :)\n"]
+            return (metRequirement, message)
 
     """
         draw on a surface
