@@ -10,7 +10,7 @@ class GameScene(SceneBase):
         self.level = self.context.level
         self.game_over = False
         self.leveling_up = False
-        self.context.fractions = [0, 0.25, 0.5, 1]
+        self.context.fractions = [0, 0.25, 0.5, 0.75, 1]
         self.buttons = []
         self.bad_pizzas = []
         self.good_pizzas = []
