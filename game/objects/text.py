@@ -16,6 +16,7 @@ class Text(Hoverable, Clickable):
         self.width = None
         self.height = None
         self.style = dict()
+        self.centered = False
         
         self.checkState(STATE.NORMAL)
         self.checkState(STATE.ACTIVE)
@@ -61,7 +62,11 @@ class Text(Hoverable, Clickable):
     def drawOn(self, screen=None):
         if screen:
             self.draw()
-            screen.blit(self.drawing, self.location)
+            if self.centered:
+                loc = (self.location[0] - self.width / 2, self.location[1])
+                screen.blit(self.drawing, loc)
+            else:
+                screen.blit(self.drawing, self.location)
         else:
             print("Error: drawOn was called on Text object but no screen argument was passed")
 
