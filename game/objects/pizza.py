@@ -78,6 +78,7 @@ class Pizza(Rangable):
         #bottom portion
         if amount > 0.5:
             surf.blit( pygame.transform.rotate(topping_img, 45), ( w, 3*h ))
+        if amount > 0.75:
             surf.blit( pygame.transform.rotate(topping_img, 45), ( 3*w , 3*h ))
 
         return surf
