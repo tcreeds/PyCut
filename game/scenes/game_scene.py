@@ -278,7 +278,9 @@ class GameScene(SceneBase):
             leftButton.width = 30
             
             fracText = Text(self.context, "0")
-            fracText.setLocation(leftButton.location[0] + leftButton.width + K, Y + (leftButton.height + K) * i)
+            fracText.centered = True
+            
+            fracText.setLocation(leftButton.location[0] + leftButton.width + 35, Y + (leftButton.height + K) * i)
             
             rightButton = Button(self.context, ">")
             rightButton.setBackgroundImg(self.context.button_bg, STATE.NORMAL)
@@ -375,7 +377,10 @@ class GameScene(SceneBase):
         for topping in self.game_toppings:
             requires += [random.choice(seq)]
         if self.current_pizza:
-            self.message_bubble.addMessage("I need a pizza")
+            items = ""
+            for x in requires:
+                items += str(x) + ","
+            self.message_bubble.addMessage("I need a pizza " + items)
             self.current_pizza.setRequirements(requires)
 
     def levelUp(self):
