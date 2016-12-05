@@ -141,11 +141,15 @@ class Pizza(Rangable):
         else:
             notwanted = 0
             missing = 0
+            req = [0 for i in range(0, len(self.toppings))]
+            for arr in self.requirements:
+                for i in range(0, len(arr)):
+                    req[i] += arr[i]
             for i in range(0, len(self.toppings)):
                 topping = self.context.fractions[self.toppings[i]]
-                if topping > self.requirements[i]:
+                if topping > req[i]:
                     notwanted += 1
-                elif topping < self.requirements[i]:
+                elif topping < req[i]:
                     missing += 1
             if missing > 0:
                 message += ["There aren't enough toppings on the pizza. :(".format(notwanted)]

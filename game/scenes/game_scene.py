@@ -25,6 +25,7 @@ class GameScene(SceneBase):
             self.createToppingOptions()
         else:
             self.createToppingOptionsWithFractions()
+            self.num_customers = 2
         
         self.pizza_count_msg = Text(self.context, "{} Pizzas left".format(len(self.pizzas)))
         self.pizza_count_msg.setPen(self.context.font)
@@ -369,13 +370,16 @@ class GameScene(SceneBase):
     def generateCurrentPizzaRequirements(self):
         requires = []
         if self.context.difficulty == "Easy":
-            seq = (0, 1)
+            for topping in self.game_toppings:
+                requires += [random.choice((0, 1))]
         else:
-            seq = self.context.fractions
-        for i in xrange(0, self.level):
-            random.getrandbits(1)
-        for topping in self.game_toppings:
-            requires += [random.choice(seq)]
+            requires = [0 for i in range(0, self.num_customers)]
+            for x in range(0, self.num_customers):
+                req = []
+                for topping in self.game_toppings:
+                    req += [random.choice((0, 1.0/4.0))]
+                requires[x] = req
+
         if self.current_pizza:
             items = ""
             for x in requires:
