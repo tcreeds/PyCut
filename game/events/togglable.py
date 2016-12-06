@@ -15,6 +15,7 @@ class Togglable():
 
         self.initiated = False #mouse pressed
         self.engaged = False #mouse released
+        self.dirty = True;
 
     def isClicked(self, event):
         if self.inRange(event.pos[0], event.pos[1]):
@@ -60,4 +61,4 @@ class Togglable():
         
     def setState(self, state):
         self.state = state
-        self.is_dirty = True
+        self.dirty = True

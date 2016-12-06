@@ -14,6 +14,7 @@ class Clickable():
         self.onRightClick = None #name of function to call when right clicking
         self.initiated = False #mouse pressed
         self.engaged = False #mouse released
+        self.dirty = True
 
     def isClicked(self, event):
         if self.inRange(event.pos[0], event.pos[1]):
@@ -52,4 +53,4 @@ class Clickable():
         
     def setState(self, state):
         self.state = state
-        self.is_dirty = True
+        self.dirty = True

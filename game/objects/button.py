@@ -62,7 +62,7 @@ class Button(Clickable, Hoverable):
             elif self.style[STATE.NORMAL][SM.BACKGROUND_COLOR]:
                 surf.fill(self.style[STATE.NORMAL][SM.BACKGROUND_COLOR])
             if self.style[self.state][SM.BACKGROUND_IMG]:
-                surf.blit(self.style[self.state][SM.BACKGROUND_IMG], (0,0), [0, 0, self.width, self.height], special_flags = 0)
+                surf.blit(pygame.transform.scale(self.style[self.state][SM.BACKGROUND_IMG], (self.width, self.height)), (0,0), [0, 0, self.width, self.height], special_flags = 0)
             elif self.style[STATE.NORMAL][SM.BACKGROUND_IMG]:
                 surf.blit(self.style[STATE.NORMAL][SM.BACKGROUND_IMG], (0,0), [0, 0, self.width, self.height], special_flags = 0)
             text = pen.render(self.label, True, color)
@@ -73,13 +73,15 @@ class Button(Clickable, Hoverable):
         self.drawing = surf
         self.width = self.drawing.get_width()
         self.height = self.drawing.get_height()
+        self.dirty = False;
 
     """
         draw on a surface
     """
     def drawOn(self, screen=None):
         if screen:
-            self.draw()
+            if self.dirty:
+                self.draw()
             screen.blit(self.drawing, self.location)
         else:
             print("Error: drawOn was called on Button object but no screen argument was passed")

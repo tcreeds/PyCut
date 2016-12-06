@@ -52,14 +52,14 @@ class GameScene(SceneBase):
         self.game_over_msg = Text(self.context, "Game Over!!!")
         self.game_over_msg.setPen(self.context.bold_font_large)
         self.game_over_msg.setColor((255, 140, 0))
-        self.game_over_msg.setLocation((self.screen.get_width()/2)
-                                       -(self.restart_button.width/2), 300)
+        self.centered = True
+        self.game_over_msg.setLocation( self.context.width / 2, 300)
 
         self.level_up_msg = Text(self.context, "New Level reached")
         self.level_up_msg.setPen(self.context.bold_font_large)
         self.level_up_msg.setColor((255, 140, 0))
-        self.level_up_msg.setLocation((self.screen.get_width()/2)
-                                      -(self.level_up_msg.width/2), 300)
+        self.centered = True
+        self.level_up_msg.setLocation(self.context.width/2, 300)
 
         self.continue_button = Button(self.context, "continue")
         self.continue_button.setBackgroundImg(self.context.button_bg, STATE.NORMAL)
@@ -364,6 +364,7 @@ class GameScene(SceneBase):
             leftButton.setOnLeftClick(decreaseCallbacks[i])
             leftButton.setLocation(X + K * 3, Y + (leftButton.height + K) * i)
             leftButton.width = 30
+            leftButton.dirty = True
 
             fracText = Text(self.context, "0")
             fracText.centered = True
@@ -375,6 +376,7 @@ class GameScene(SceneBase):
             rightButton.setOnLeftClick(increaseCallbacks[i])
             rightButton.setLocation(leftButton.location[0] + 100, Y + (leftButton.height + K) * i)
             rightButton.width = 30
+            rightButton.dirty = True
 
             self.fractionTexts += [fracText]
             self.buttons += [leftButton, rightButton]
@@ -462,7 +464,7 @@ class GameScene(SceneBase):
         """
         newAmount = self.current_pizza.toppings[index] + amount
         if newAmount >= 0 and newAmount < len(self.context.fractions):
-            self.current_pizza.toppings[index] = newAmount
+            self.current_pizza.changeTopping(index, newAmount)
             self.fractionTexts[index].setText(str(self.context.fractionStrings[newAmount]))
 
     def addCookingButton(self):
