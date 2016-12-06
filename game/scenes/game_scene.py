@@ -11,21 +11,29 @@ class GameScene(SceneBase):
         self.game_over = False
         self.leveling_up = False
         self.context.fractions = [0, 0.25, 0.5, 0.75, 1]
+        self.context.fractionStrings = ["0", "1/4", "1/2", "3/4", "1"]
         self.buttons = []
         self.bad_pizzas = []
         self.good_pizzas = []
         self.game_toppings = self.context.game_toppings
-        self.characters = self.context.game_characters
+        self.characters = []
+        for character in self.context.game_characters:
+            if self.context.difficulty == "Advanced":
+                self.characters.append(pygame.transform.scale(character, (character.get_width() / 2, character.get_height() / 2)))
+            else:
+                self.characters.append(character)
         self.current_pizza = None
         
         self.createGameMenu()
-        self.createMessageBubble()
         self.buildPizzas()
         if self.context.difficulty == "Easy":
             self.createToppingOptions()
+            self.num_customers = 1
+            self.createMessageBubble()
         else:
             self.createToppingOptionsWithFractions()
-            self.num_customers = 2
+            self.num_customers = 4
+            self.createMessageBubbles(self.num_customers)
         
         self.pizza_count_msg = Text(self.context, "{} Pizzas left".format(len(self.pizzas)))
         self.pizza_count_msg.setPen(self.context.font)
@@ -91,9 +99,16 @@ class GameScene(SceneBase):
         # The game scene is just a blank blue screen
         self.screen.fill((244, 101, 36))
         self.screen.blit(self.context.shop_background,(0,0))
-        self.screen.blit(self.characters[self.level% len(self.characters)],(850,255))
+        if self.context.difficulty == "Advanced":
+            self.screen.blit(self.characters[0],(150,255))
+            self.screen.blit(self.characters[1],(594,255))
+            self.screen.blit(self.characters[2],(150,380))
+            self.screen.blit(self.characters[3],(594,380))
+        else:
+            self.screen.blit(self.characters[self.level% len(self.characters)],(850,255))
         self.screen.blit(self.context.counter_top,(0,0))
-        self.message_bubble.drawOn(self.screen)
+        for x in range(0, len(self.message_bubbles)):
+            self.message_bubbles[x].drawOn(self.screen)
         if self.game_over:
             self.restart_button.setLocation( (self.screen.get_width()/2) -(self.restart_button.width/2) ,
                 (self.screen.get_height()/2) - (self.restart_button.height/2) )
@@ -230,7 +245,6 @@ class GameScene(SceneBase):
         if perfected:
             if limit > 0:
                 self.current_pizza = self.pizzas[-1]
-                self.generateCurrentPizzaRequirements()
             else:
                 self.current_pizza = None
 
@@ -281,7 +295,7 @@ class GameScene(SceneBase):
             fracText = Text(self.context, "0")
             fracText.centered = True
             
-            fracText.setLocation(leftButton.location[0] + leftButton.width + 35, Y + (leftButton.height + K) * i)
+            fracText.setLocation(leftButton.location[0] + leftButton.width + 35, Y + 4 + (leftButton.height + K) * i)
             
             rightButton = Button(self.context, ">")
             rightButton.setBackgroundImg(self.context.button_bg, STATE.NORMAL)
@@ -338,7 +352,7 @@ class GameScene(SceneBase):
         newAmount = self.current_pizza.toppings[index] + amount
         if newAmount >= 0 and newAmount < len(self.context.fractions):
             self.current_pizza.toppings[index] = newAmount
-            self.fractionTexts[index].setText(str(self.context.fractions[newAmount]))
+            self.fractionTexts[index].setText(str(self.context.fractionStrings[newAmount]))
             
     def addCookingButton(self):
         self.cook = Button(self.context, "Cook")
@@ -351,16 +365,30 @@ class GameScene(SceneBase):
     def handleCooking(self):
         if self.current_pizza:
             validity = self.current_pizza.checkRequirements()
+            feedback = validity[1]
             if validity[0]:
                 self.current_pizza.setPerfect()
                 self.levelUp()
             else:
                 self.current_pizza.moveToTrash((1000,600), self.trashCan)
-            if validity[1]:
-                self.message_bubble.addMessage(None, validity[1])
+            if feedback:
+                for i in range(0, len(feedback)):
+                    self.message_bubbles[i].addMessage(None, feedback[i])
 
     def createMessageBubble(self):
-        self.message_bubble = MessageBubble(self.context)
+        self.message_bubbles = []
+        self.message_bubbles.append(MessageBubble(self.context))
+    
+    def createMessageBubbles(self, i):
+        self.message_bubbles = []
+        exes = [280, 724, 280, 724]
+        whys = [255, 255, 380, 380]
+        for x in range(0, i):
+            bubble = MessageBubble(self.context)
+            bubble.setLocation(exes[x], whys[x])
+            bubble.setScale(300, 150)
+            self.message_bubbles.append(bubble)
+        
 
     def createTrashCan(self):
         self.trashCan = self.context.trash_can_img #trashcan is imaginary only back and front are drawn.
@@ -372,6 +400,7 @@ class GameScene(SceneBase):
         if self.context.difficulty == "Easy":
             for topping in self.game_toppings:
                 requires += [random.choice((0, 1))]
+            print requires
         else:
             requires = [0 for i in range(0, self.num_customers)]
             for x in range(0, self.num_customers):
@@ -381,10 +410,11 @@ class GameScene(SceneBase):
                 requires[x] = req
 
         if self.current_pizza:
-            items = ""
-            for x in requires:
-                items += str(x) + ","
-            self.message_bubble.addMessage("I need a pizza " + items)
+            for i in range(0, self.num_customers):
+                self.message_bubbles[i].addMessage("I need a pizza")
+                if self.context.difficulty == "Advanced":
+                    self.message_bubbles[i].addMessage(str(requires[i]))
+                
             self.current_pizza.setRequirements(requires)
 
     def levelUp(self):

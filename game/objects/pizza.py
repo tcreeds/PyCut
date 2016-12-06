@@ -66,7 +66,10 @@ class Pizza(Rangable):
     def drawTopping(self, surf, i, pad=0):
         #needs serious refactoring
         topping_img = pygame.transform.scale(self.context.game_toppings[i], (self.width/4, self.height/4))
-        amount = self.context.fractions[self.toppings[i]]
+        if self.context.difficulty == "Advanced":
+            amount = self.context.fractions[self.toppings[i]]
+        else:
+            amount = self.toppings[i]
         #center portion
         surf.blit(topping_img, ( (surf.get_width()/2) - (topping_img.get_width()/2), (surf.get_height()/2) - (topping_img.get_height()/2)))
         #top portion
@@ -101,7 +104,7 @@ class Pizza(Rangable):
     """
     def addTopping(self, index):
         if self.toppings[index] == 0:
-            self.toppings[index] = 3
+            self.toppings[index] = 1
         else:
             self.toppings[index] = 0
 
