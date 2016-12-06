@@ -54,8 +54,8 @@ class TitleScene(SceneBase):
         self.title = Text(self.context, self.context.title)
         self.title.setColor((244, 101, 36))
         self.title.setPen(self.context.bold_font_large)
-        self.title.setLocation( (self.context.width - self.title.width) // 2,
-                                (self.context.height) // 2 - self.title.height)
+        self.title.centered = True
+        self.title.setLocation( self.context.width / 2, 300 )
 
     def createStartButton(self):
         self.start_button = Button(self.context, "Play Game")

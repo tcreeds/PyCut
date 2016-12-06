@@ -31,14 +31,7 @@ class Pizza(Rangable):
         update the button drawing surface.
     """
     def draw(self):
-        S = 8 #speed towards trash can
-        A = 9.8 #acceleration towards trash can
-        if self.trashing:
-            if self.touches(self.trash_can):
-                self.trashed = True
-                self.trashing = False
-            else:
-                self.setLocation(self.trash_pos[0] + 50, self.y + ((S)*A) )
+        
         surf = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
         pizza_img = pygame.transform.scale(self.context.plain_pizza, (self.width, self.height))
         surf.blit(pizza_img, (0,0))
@@ -49,13 +42,23 @@ class Pizza(Rangable):
         #pygame.draw.arc(surf, (225,216,0), [0, 0, self.width, self.height], 0, 360, 2)#crust
         #draw slices on here afterwards
         self.drawing = surf
+        self.dirty = False
 
     """
         draw on a surface
     """
     def drawOn(self, screen=None):
+        S = 8 #speed towards trash can
+        A = 9.8 #acceleration towards trash can
+        if self.trashing:
+            if self.touches(self.trash_can):
+                self.trashed = True
+                self.trashing = False
+            else:
+                self.setLocation(self.trash_pos[0] + 50, self.y + ((S)*A) )
         if screen:
-            self.draw()
+            if self.dirty:
+                self.draw()
             screen.blit(self.drawing, self.location)
         else:
             print("Error: drawOn was called on Button object but no screen argument was passed")
@@ -107,6 +110,14 @@ class Pizza(Rangable):
             self.toppings[index] = 1
         else:
             self.toppings[index] = 0
+        self.dirty = True
+        
+    """
+        Change Topping
+    """
+    def changeTopping(self, index, amount):
+        self.toppings[index] = amount
+        self.dirty = True
 
     """
         set Costumer hidden Pizza requirements

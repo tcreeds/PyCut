@@ -55,13 +55,15 @@ class Text(Hoverable, Clickable):
         self.drawing = pen.render(self.text, True, color)
         self.width = self.drawing.get_width()
         self.height = self.drawing.get_height()
+        self.dirty = False
 
     """
         draw on a surface
     """
     def drawOn(self, screen=None):
         if screen:
-            self.draw()
+            if self.dirty:
+                self.draw()
             if self.centered:
                 loc = (self.location[0] - self.width / 2, self.location[1])
                 screen.blit(self.drawing, loc)
@@ -75,21 +77,21 @@ class Text(Hoverable, Clickable):
     """
     def setText(self, text):
         self.text = text
-        self.draw()
+        self.dirty = True
 
     """
     change the font size
     """
     def setPen(self, font, state=STATE.NORMAL):
         self.style[state][SM.PEN] = font
-        self.draw()
+        self.dirty = True
 
     """
     change the color
     """
     def setColor(self, color=(0, 128, 0), state=STATE.NORMAL):
         self.style[state][SM.COLOR] = color
-        self.draw()
+        self.dirty = True
 
     """
     x,y are the center points of the text.

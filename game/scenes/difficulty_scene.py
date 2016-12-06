@@ -71,8 +71,8 @@ class DifficultyScene(SceneBase):
         self.title = Text(self.context, "Choose Difficulty")
         self.title.setColor((244, 101, 36))
         self.title.setPen(self.context.bold_font_large)
-        self.title.setLocation((self.context.width - self.title.width) // 2,
-                               (self.context.height - self.title.height) // 2)
+        self.title.centered = True
+        self.title.setLocation( self.context.width / 2, 300)
 
     def createEasyButton(self):
         """

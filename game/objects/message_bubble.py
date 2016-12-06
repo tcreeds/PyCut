@@ -18,6 +18,8 @@ class MessageBubble(Hoverable):
         self.setLocation(180, 100)
         self.width = self.background.get_width()
         self.height = self.background.get_height()
+        self.drawing = None
+        self.draw()
 
     """
         update the text drawing surface.
@@ -31,6 +33,7 @@ class MessageBubble(Hoverable):
         for i in xrange(limit):
             self.drawing.blit(self.messages[limit-i-1], (x, y))
             y -= self.messages[limit-i-1].get_height()
+        self.dirty = False
 
 
     """
@@ -38,7 +41,8 @@ class MessageBubble(Hoverable):
     """
     def drawOn(self, screen=None):
         if screen:
-            self.draw()
+            if self.dirty:
+                self.draw()
             screen.blit(self.drawing, self.location)
         else:
             print("Error: drawOn was called on Text object but no screen argument was passed")
@@ -48,14 +52,14 @@ class MessageBubble(Hoverable):
     """
     def setPen(self, font):
         self.pen = font
-        self.draw()
+        self.dirty = True
 
     """
     change the color
     """
     def setColor(self, color=(0, 128, 0)):
         self.color = color
-        self.draw()
+        self.dirty = True
 
     """
     x,y are the center points of the text.
@@ -69,6 +73,7 @@ class MessageBubble(Hoverable):
         self.background = pygame.transform.scale(self.background, (width, height))
         self.width = self.background.get_width()
         self.height = self.background.get_height()
+        self.dirty = True
 
     """
     Add message to message bubble.
@@ -85,9 +90,11 @@ class MessageBubble(Hoverable):
         if message_arr:
             for msg in message_arr:
                 self.messages.append(self.pen.render(msg, True, color))
+        self.dirty = True
 
     """
     clear message from message bubble.
     """
     def clearMessages(self):
         self.messages = []
+        self.dirty = True

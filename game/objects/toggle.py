@@ -72,13 +72,15 @@ class Toggle(Togglable):
         self.drawing = surf
         self.width = self.drawing.get_width()
         self.height = self.drawing.get_height()
+        self.dirty = False
 
     """
         draw on a surface
     """
     def drawOn(self, screen=None):
         if screen:
-            self.draw()
+            if self.dirty:
+                self.draw()
             screen.blit(self.drawing, self.location)
         else:
             print("Error: drawOn was called on Button object but no screen argument was passed")
