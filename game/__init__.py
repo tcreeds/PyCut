@@ -5,6 +5,7 @@ from . import scenes, events, objects
 class PyCutGame():
     """docstring for PyCutGame"""
     def __init__(self):
+        self.dev = True
         self.data = None
         #pre-inits for pygame?
         pygame.mixer.pre_init(44100, -16, 1, 512*2)
