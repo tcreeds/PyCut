@@ -15,6 +15,7 @@ class MessageBubble(Hoverable):
         self.background = self.context.message_bubble_img
         self.pen = self.context.bold_font
         self.messages = []
+        self.flip = False
         self.setLocation(180, 100)
         self.width = self.background.get_width()
         self.height = self.background.get_height()
@@ -26,7 +27,10 @@ class MessageBubble(Hoverable):
     """
     def draw(self):
         self.drawing = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
-        self.drawing.blit(self.background, (0,0))
+        if self.flip:
+            self.drawing.blit(pygame.transform.flip(self.background, True, False), (0,0))
+        else:
+            self.drawing.blit(self.background, (0,0))
         x = 10
         y = self.height - 62
         limit = len(self.messages)

@@ -132,9 +132,10 @@ class Pizza(Rangable):
         or not. (Boolean, Message)
     """
     def checkRequirements(self):
-        message = []
-        metRequirement = False
+        
         if self.context.difficulty == "Easy":
+            message = []
+            metRequirement = False
             notwanted = 0
             missing = 0
             for i in range(0, len(self.toppings)):
@@ -152,29 +153,48 @@ class Pizza(Rangable):
                 metRequirement = True
                 message += ["Thank you! That was the perfect Pizza I was looking for :)\n"]
             return (metRequirement, message)
-        else:
-            notwanted = 0
-            missing = 0
-            req = [0 for i in range(0, len(self.toppings))]
+        
+        elif self.context.difficulty == "Advanced":
+            metRequirement = True
+            messages = []
+            
+            # calculate full pizza requirements
+            totalRequirements = [0 for i in range(0, len(self.toppings))]
             for arr in self.requirements:
                 for i in range(0, len(arr)):
-                    req[i] += arr[i]
+                    totalRequirements[i] += arr[i]
+              
+            # check if pizza matches requirements
             for i in range(0, len(self.toppings)):
                 topping = self.context.fractions[self.toppings[i]]
-                if topping > req[i]:
-                    notwanted += 1
-                elif topping < req[i]:
-                    missing += 1
-            if missing > 0:
-                message += ["There aren't enough toppings on the pizza. :(".format(notwanted)]
-            elif missing < 0:
-                message += ["There are toppings on the pizza that I don't want. :(".format(notwanted)]
-            if notwanted > 0:
-                message += ["There is {} topping on the pizza I don't like. :(".format(notwanted)]
-            if not(notwanted) and missing == 0:
-                metRequirement = True
-                message += ["Thank you! That was the perfect Pizza I was looking for :)\n"]
-            return (metRequirement, message)
+                if topping > totalRequirements[i] or topping < totalRequirements[i]:
+                    metRequirement = False
+            
+            # set up person-specific messages
+            for personPreference in self.requirements:
+                message = []
+                notwanted = 0
+                missing = 0
+                for i in range(0, len(self.toppings)):
+                    toppingAmount = self.context.fractions[self.toppings[i]]
+                    if personPreference[i] == 0 and toppingAmount > totalRequirements[i]:
+                        notwanted += 1
+                    elif personPreference[i] > 0 and toppingAmount < totalRequirements[i]:
+                        missing += 1
+                
+                if notwanted == 1:
+                    message += ["I want less of one topping"]
+                elif notwanted > 1:
+                    message += ["I want less of {} toppings".format(notwanted)]
+                if missing == 1:
+                    message += ["I want more of one topping"]
+                elif missing > 1:
+                    message += ["I want more of {} toppings".format(missing)]
+                messages.append(message)
+                    
+            if metRequirement:
+                messages[random.choice((0,1,2,3))] += ["Thank you! That was the perfect Pizza I was looking for :)\n"]
+            return (metRequirement, messages[0], messages[1], messages[2], messages[3])
 
     """
         draw on a surface
