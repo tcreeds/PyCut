@@ -1,10 +1,12 @@
 import pygame
+import traceback
 
 from . import scenes, events, objects
 
 class PyCutGame():
     """docstring for PyCutGame"""
     def __init__(self):
+        self.dev = True
         self.data = None
         #pre-inits for pygame?
         pygame.mixer.pre_init(44100, -16, 1, 512*2)
@@ -97,3 +99,14 @@ class PyCutGame():
 
     def quit(self):
         self.quit_attempt = True
+
+    def write_file(self, file_path):
+        # Ignoring file_path because it seems to be useless when this actually gets called
+        # I also don't know what was calling this, nor what message to store
+        # So I am just dumping a stack trace at the time of call
+        log = open("log.txt","a")
+        log.write("\n")
+        log.write("Begin Log \n")
+        log.write(''.join(traceback.format_stack()))
+        log.write("End Log")
+        log.close()
