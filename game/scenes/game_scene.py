@@ -5,6 +5,7 @@ import random
 import pygame
 from game.objects import STATE, Text, Button, Pizza, MessageBubble, Toggle
 from . import SceneBase
+import cProfile
 
 class GameScene(SceneBase):
     """
@@ -15,6 +16,8 @@ class GameScene(SceneBase):
 
     def __init__(self, context):
         SceneBase.__init__(self, context)
+        #self.c = cProfile.Profile()
+        #self.c.enable()
         self.override_render = True
         self.level = self.context.level
         self.game_over = False
@@ -76,6 +79,20 @@ class GameScene(SceneBase):
         self.generateCurrentPizzaRequirements()
         self.count = 0#for debugging
 
+        self.static_surface = pygame.Surface((self.context.width, self.context.height), pygame.SRCALPHA)
+        
+        # The game scene is just a blank blue screen
+        self.static_surface.fill((244, 101, 36))
+        self.static_surface.blit(self.context.shop_background,(0,0))
+        if self.context.difficulty == "Advanced":
+            self.static_surface.blit(self.characters[0],(150,255))
+            self.static_surface.blit(self.characters[1],(594,255))
+            self.static_surface.blit(self.characters[2],(150,380))
+            self.static_surface.blit(self.characters[3],(594,380))
+        else:
+            self.static_surface.blit(self.characters[self.level% len(self.characters)],(850,255))
+        self.static_surface.blit(self.context.counter_top,(0,0))
+        
         pygame.display.flip()
 
     def ProcessInput(self, events, pressed_keys):
@@ -127,18 +144,9 @@ class GameScene(SceneBase):
         Draw loop
         inherited from SceneBase
         """
-
-        # The game scene is just a blank blue screen
-        self.screen.fill((244, 101, 36))
-        self.screen.blit(self.context.shop_background,(0,0))
-        if self.context.difficulty == "Advanced":
-            self.screen.blit(self.characters[0],(150,255))
-            self.screen.blit(self.characters[1],(594,255))
-            self.screen.blit(self.characters[2],(150,380))
-            self.screen.blit(self.characters[3],(594,380))
-        else:
-            self.screen.blit(self.characters[self.level% len(self.characters)],(850,255))
-        self.screen.blit(self.context.counter_top,(0,0))
+        
+        self.screen.blit(self.static_surface, (0, 0))
+        
         for x in range(0, len(self.message_bubbles)):
             self.message_bubbles[x].drawOn(self.screen)
             
@@ -229,7 +237,8 @@ class GameScene(SceneBase):
         """
         Callback for quit click
         """
-
+        #self.c.disable()
+        #self.c.dump_stats("output.txt")
         self.context.quit()
 
     def handleRestartButtonClick(self):

@@ -1,7 +1,7 @@
 import pygame
 from pygame import gfxdraw
 from .rangable import Rangable
-from random import randint
+import random
 
 class Pizza(Rangable):
     """docstring for Pizza"""
@@ -15,7 +15,7 @@ class Pizza(Rangable):
         self.trash_can = None
         self.trash_pos = None
         self.slices = None
-        self.offset = randint(0,4)
+        self.offset = random.randint(0,4)
         self.color=(0,0,0)
         self.x = 100
         self.y = 400 # 5=> margin between top and pizza
