@@ -191,10 +191,48 @@ class Pizza(Rangable):
                 elif missing > 1:
                     message += ["I want more of {} toppings".format(missing)]
                 messages.append(message)
+
+            # Unique person messages 
+            personSpecificMessages = []
+
+            # Wrong / correct pizza 
+            if metRequirement 
+            	personSpecificMessages.append(["The is the correct pizza!"])
+            else 
+            	personSpecificMessages.append(["This is not the pizza I want."])
+
+           	# Gather some potental 'simple' clues 
+            potentialCluesMuch = []
+            potentialCluesLittle = []
+            for i in range(0, len(self.toppings)):
+            	guessAmount = self.context.fractions[self.toppings[i]]
+            	correctAmount = totalRequirements[i]
+            	if guessAmount > correctAmount
+            		potentialCluesMuch.append(["There is more than enough of topping {} ".format(i)])
+            	elif guessAmount < correctAmount
+            		potentialCluesLittle.append(["There is too much of topping {} ".format(i)])
+
+            # To much of a topping 
+           	if len(potentialCluesMuch) == 0
+           		personSpecificMessages.append(["There is not too many toppings"])
+           	else
+           		personSpecificMessages.append(potentialCluesMuch[random.randint(0,len(potentialCluesMuch))])
+
+            # To little of a topping 
+           	if len(potentialCluesLittle) == 0
+           		personSpecificMessages.append(["There is at least enough of each topping"])
+           	else
+           		personSpecificMessages.append(potentialCluesLittle[random.randint(0,len(potentialCluesLittle))])	
+
+            # Relational Commnet 
+            # TODO - Create relatonal clues from pseudocode example 
+            # TODO - Choose one of the generated clues 
                     
             if metRequirement:
                 messages[random.choice((0,1,2,3))] += ["Thank you! That was the perfect Pizza I was looking for :)\n"]
-            return (metRequirement, messages[0], messages[1], messages[2], messages[3])
+
+            # return (metRequirement, messages[0], messages[1], messages[2], messages[3])
+            return (metRequirement, personSpecificMessages[0], personSpecificMessages[1], personSpecificMessages[2], messages[3])
 
     """
         draw on a surface
