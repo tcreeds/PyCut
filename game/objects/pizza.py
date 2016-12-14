@@ -209,19 +209,38 @@ class Pizza(Rangable):
             	guessAmount = self.context.fractions[self.toppings[i]]
             	correctAmount = totalRequirements[i]
             	if guessAmount > correctAmount:
-            		potentialCluesMuch.append(["There is more than enough of topping {} ".format(i)])
+            		potentialCluesMuch.append(["Too much {} ".format(i)])
             	elif guessAmount < correctAmount:
-            		potentialCluesLittle.append(["There is too much of topping {} ".format(i)])
+            		potentialCluesLittle.append(["Too little {} ".format(i)])
 
+                print("Only once per guess?")
+           	print(len(potentialCluesMuch))
+           	print(len(potentialCluesLittle))
+
+            # Back up for the 'simple clues'
+            #if len(potentialCluesMuch) == 0:
+            #	for i in range(0, len(self.toppings)):
+            #		guessAmount = self.context.fractions[self.toppings[i]]
+            #		correctAmount = totalRequirements[i]
+            #		if guessAmount == correctAmount:
+            #			potentialCluesMuch.append(["The {} is just right".format(i)])
+
+            #if len(potentialCluesLittle) == 0:
+            #	for i in range(0, len(self.toppings)):
+            #		guessAmount = self.context.fractions[self.toppings[i]]
+            #		correctAmount = totalRequirements[i]
+            #		if guessAmount == correctAmount:
+            #			potentialCluesLittle.append(["The {} is just right".format(i)])
+           
             # To much of a topping 
            	if len(potentialCluesMuch) == 0:
-           		personSpecificMessages.append(["There is not too many toppings"])
+           		personSpecificMessages.append(["Looks fine to me"])
            	else:
            		personSpecificMessages.append(potentialCluesMuch[random.randint(1,len(potentialCluesMuch)) - 1])
 
             # To little of a topping 
            	if len(potentialCluesLittle) == 0:
-           		personSpecificMessages.append(["There is at least enough of each topping"])
+           		personSpecificMessages.append(["Looks fine to me"])
            	else:
            		personSpecificMessages.append(potentialCluesLittle[random.randint(1,len(potentialCluesLittle)) - 1])	
 
@@ -235,7 +254,11 @@ class Pizza(Rangable):
             # Relational Commnet 
             # TODO - Create relatonal clues from pseudocode example 
             # TODO - Choose one of the generated clues 
-                    
+            print(len(personSpecificMessages))
+            print(personSpecificMessages[0])
+            print(personSpecificMessages[1])
+            print(personSpecificMessages[2])
+            print(personSpecificMessages[3])
             if metRequirement:
                 messages[random.choice((0,1,2,3))] += ["Thank you! That was the perfect Pizza I was looking for :)\n"]
 
@@ -275,7 +298,7 @@ class Pizza(Rangable):
         for i in range(0, len(self.toppings) - 1):
         	for j in range(i+1, len(self.toppings)):
         		if totalRequirements[i] == totalRequirements[j]: 
-        			self.potentalClues.append(["I want the same amount of {} as {}".format(i, j)])
+        			self.potentalClues.append(["I want the same {} as {}".format(i, j)])
 
         # Double
         for i in range(0, len(self.toppings) - 1):
@@ -294,10 +317,10 @@ class Pizza(Rangable):
         			self.potentalClues.append(["I want tripple the {} as {}".format(j, i)])
 
         # As much as others
-        for i in range(0, len(self.toppings)):
-        	total = 0.0
-        	for j in range(0, len(self.toppings)):
-        		if i != j:
-        			total += self.toppings[j]
-        	if self.toppings[i] == total: 
-        		self.potentalClues.append(["I want as much {} as everything else combined".format(i)])
+        #for i in range(0, len(self.toppings)):
+        #	total = 0.0
+        #	for j in range(0, len(self.toppings)):
+        #		if i != j:
+        #			total += self.toppings[j]
+        #	if self.toppings[i] == total: 
+        #		self.potentalClues.append(["I want as much {} as everything else combined".format(i)])
