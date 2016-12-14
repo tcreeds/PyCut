@@ -214,10 +214,6 @@ class Pizza(Rangable):
                 elif guessAmount < correctAmount:
                     potentialCluesLittle.append(["Too little {} ".format(names[i])])
 
-            print("Only once per guess?")
-            print(len(potentialCluesMuch))
-            print(len(potentialCluesLittle))
-
             # Back up for the 'simple clues'
             if len(potentialCluesMuch) == 0:
                 for i in range(0, len(self.toppings)):
@@ -252,19 +248,10 @@ class Pizza(Rangable):
             self.generateClues(names)	
             # Random clue as the final person
             if len(self.potentalClues) == 0:
-                personSpecificMessages.append(["Wat?"])
+                personSpecificMessages.append(["Looks fine to me"])
             else:
                 personSpecificMessages.append(self.potentalClues[random.randint(1,len(self.potentalClues)) - 1])	
 
-            # Relational Commnet 
-            # TODO - Create relatonal clues from pseudocode example 
-            # TODO - Choose one of the generated clues 
-            print(len(personSpecificMessages))
-            print(personSpecificMessages[0])
-            print(personSpecificMessages[1])
-            print(personSpecificMessages[2])
-            print(personSpecificMessages[3])
-            
             formattedMessages = [[] for i in range(0, 4)]
             
             for i in range(0, len(personSpecificMessages)):
