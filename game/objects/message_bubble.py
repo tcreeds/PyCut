@@ -31,7 +31,7 @@ class MessageBubble(Hoverable):
             self.drawing.blit(pygame.transform.flip(self.background, True, False), (0,0))
         else:
             self.drawing.blit(self.background, (0,0))
-        x = 2
+        x = self.width * 0.05
         y = self.height - 62
         limit = len(self.messages)
         for i in xrange(limit):
