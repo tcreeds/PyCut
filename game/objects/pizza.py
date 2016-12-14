@@ -24,6 +24,7 @@ class Pizza(Rangable):
         self.height = 150
         self.toppings = [0, 0, 0, 0]
         self.requirements = []
+       	self.potentalClues = []
         self.drawing = None
         self.draw()
 
@@ -196,9 +197,9 @@ class Pizza(Rangable):
             personSpecificMessages = []
 
             # Wrong / correct pizza 
-            if metRequirement 
+            if metRequirement: 
             	personSpecificMessages.append(["The is the correct pizza!"])
-            else 
+            else: 
             	personSpecificMessages.append(["This is not the pizza I want."])
 
            	# Gather some potental 'simple' clues 
@@ -207,22 +208,29 @@ class Pizza(Rangable):
             for i in range(0, len(self.toppings)):
             	guessAmount = self.context.fractions[self.toppings[i]]
             	correctAmount = totalRequirements[i]
-            	if guessAmount > correctAmount
+            	if guessAmount > correctAmount:
             		potentialCluesMuch.append(["There is more than enough of topping {} ".format(i)])
-            	elif guessAmount < correctAmount
+            	elif guessAmount < correctAmount:
             		potentialCluesLittle.append(["There is too much of topping {} ".format(i)])
 
             # To much of a topping 
-           	if len(potentialCluesMuch) == 0
+           	if len(potentialCluesMuch) == 0:
            		personSpecificMessages.append(["There is not too many toppings"])
-           	else
-           		personSpecificMessages.append(potentialCluesMuch[random.randint(0,len(potentialCluesMuch))])
+           	else:
+           		personSpecificMessages.append(potentialCluesMuch[random.randint(1,len(potentialCluesMuch)) - 1])
 
             # To little of a topping 
-           	if len(potentialCluesLittle) == 0
+           	if len(potentialCluesLittle) == 0:
            		personSpecificMessages.append(["There is at least enough of each topping"])
-           	else
-           		personSpecificMessages.append(potentialCluesLittle[random.randint(0,len(potentialCluesLittle))])	
+           	else:
+           		personSpecificMessages.append(potentialCluesLittle[random.randint(1,len(potentialCluesLittle)) - 1])	
+
+           	self.generateClues()	
+           	# Random clue as the final person
+           	if len(self.potentalClues) == 0:
+           		personSpecificMessages.append(["Wat?"])
+           	else:
+           		personSpecificMessages.append(self.potentalClues[random.randint(1,len(self.potentalClues)) - 1])	
 
             # Relational Commnet 
             # TODO - Create relatonal clues from pseudocode example 
@@ -232,7 +240,7 @@ class Pizza(Rangable):
                 messages[random.choice((0,1,2,3))] += ["Thank you! That was the perfect Pizza I was looking for :)\n"]
 
             # return (metRequirement, messages[0], messages[1], messages[2], messages[3])
-            return (metRequirement, personSpecificMessages[0], personSpecificMessages[1], personSpecificMessages[2], messages[3])
+            return (metRequirement, personSpecificMessages[0], personSpecificMessages[1], personSpecificMessages[2], personSpecificMessages[3])
 
     """
         draw on a surface
@@ -247,3 +255,49 @@ class Pizza(Rangable):
         self.x = x
         self.y = y
         self.location = (x, y)
+
+    """
+        Logic for generating clues
+    """
+    def generateClues(self):
+    	self.potentalClues = []
+
+    	# calculate full pizza requirements
+      	totalRequirements = [0 for i in range(0, len(self.toppings))]
+        for arr in self.requirements:
+            for i in range(0, len(arr)):
+                totalRequirements[i] += arr[i]
+
+        for i in range(0, len(totalRequirements)):
+        	print(totalRequirements[i])
+
+        # Same as 
+        for i in range(0, len(self.toppings) - 1):
+        	for j in range(i+1, len(self.toppings)):
+        		if totalRequirements[i] == totalRequirements[j]: 
+        			self.potentalClues.append(["I want the same amount of {} as {}".format(i, j)])
+
+        # Double
+        for i in range(0, len(self.toppings) - 1):
+        	for j in range(i+1, len(self.toppings)):
+        		if totalRequirements[i] == 2 * totalRequirements[j] and totalRequirements[j] != 0:
+        			self.potentalClues.append(["I want twice the {} as {}".format(i, j)])
+        		if totalRequirements[j] == 2 * totalRequirements[i] and totalRequirements[i] != 0:
+        			self.potentalClues.append(["I want twice the {} as {}".format(j, i)])
+
+        # Tripple
+        for i in range(0, len(self.toppings) - 1):
+        	for j in range(i+1, len(self.toppings)):
+        		if totalRequirements[i] == 3 * totalRequirements[j] and totalRequirements[j] != 0:
+        			self.potentalClues.append(["I want tripple the {} as {}".format(i, j)])
+        		if totalRequirements[j] == 3 * totalRequirements[i] and totalRequirements[i] != 0:
+        			self.potentalClues.append(["I want tripple the {} as {}".format(j, i)])
+
+        # As much as others
+        for i in range(0, len(self.toppings)):
+        	total = 0.0
+        	for j in range(0, len(self.toppings)):
+        		if i != j:
+        			total += self.toppings[j]
+        	if self.toppings[i] == total: 
+        		self.potentalClues.append(["I want as much {} as everything else combined".format(i)])
