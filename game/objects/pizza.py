@@ -234,7 +234,6 @@ class Pizza(Rangable):
                 personSpecificMessages.append(["Looks fine to me"])
             else:
                 msg = potentialCluesMuch[random.randint(1,len(potentialCluesMuch)) - 1]
-                print "Much message " + str(msg)
                 personSpecificMessages.append(msg)
 
             # To little of a topping 
@@ -242,7 +241,6 @@ class Pizza(Rangable):
                 personSpecificMessages.append(["Looks fine to me"])
             else:
                 msg = potentialCluesLittle[random.randint(1,len(potentialCluesLittle)) - 1]
-                print "Little message " + str(msg)
                 personSpecificMessages.append(msg)	
 
             self.generateClues(names)	
@@ -265,7 +263,6 @@ class Pizza(Rangable):
 
     def formatString(self, msg, lineLength):
         strArray = [];
-        print "Formatting " + msg
         
         #keep adding snippets as long as there is more to add
         while len(msg) > lineLength:
@@ -277,7 +274,6 @@ class Pizza(Rangable):
             if index == 0:
                 index = lineLength
             strArray += [msg[:index]]
-            print strArray
             msg = msg[index+1:]
         
         #add remainder of message
@@ -331,9 +327,9 @@ class Pizza(Rangable):
         for i in range(0, len(self.toppings) - 1):
             for j in range(i+1, len(self.toppings)):
                 if totalRequirements[i] == 3 * totalRequirements[j] and totalRequirements[j] != 0:
-                    self.potentalClues.append(["I want tripple the {} as {}".format(names[i], names[j])])
+                    self.potentalClues.append(["I want triple the {} as {}".format(names[i], names[j])])
                 if totalRequirements[j] == 3 * totalRequirements[i] and totalRequirements[i] != 0:
-                    self.potentalClues.append(["I want tripple the {} as {}".format(names[j], names[i])])
+                    self.potentalClues.append(["I want triple the {} as {}".format(names[j], names[i])])
 
         # As much as others
         for i in range(0, len(self.toppings)):
