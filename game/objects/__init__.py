@@ -1,11 +1,13 @@
-class STATE():
+class STATE:
     """docstring for STATE"""
     NORMAL = 0;
     ACTIVE = 1;
     HOVER = 2;
     INACTIVE = 3;
 
-class STYLES_NAMES():
+STATES = [STATE.NORMAL, STATE.ACTIVE, STATE.HOVER, STATE.INACTIVE]
+
+class STYLES_NAMES:
     """docstring for STYLES"""
     COLOR = "color";  
     BACKGROUND_IMG = "background_img";
